@@ -9,5 +9,6 @@ import Foundation
 
 struct PostData: Codable
 {
-    let x: Int
+    let title: String
+    let score: Int
 }

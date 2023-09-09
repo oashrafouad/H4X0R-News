@@ -10,12 +10,30 @@ import UIKit
 class NewsTableViewController: UITableViewController {
     
     var array: [String] = []
+    var posts: [PostData] = []
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.title = "H4X0R News"
+
+        fetchPostsList()
         
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    
+    @IBAction func retrieveButtonPressed(_ sender: UIBarButtonItem) {
+        print(posts)
+    }
+    
+
+    func fetchPostsList()
+    {
         if let url = URL(string: K.websiteURL)
         {
             let session = URLSession(configuration: .default)
@@ -28,11 +46,10 @@ class NewsTableViewController: UITableViewController {
                 
                 if let safeData = data
                 {
-                    let decoder = JSONDecoder()
                     do
                     {
-                        let results = try decoder.decode([Int].self, from: safeData)
-                        print(results)
+                        let results = try JSONDecoder().decode([Int].self, from: safeData)
+                        self.fetchPostData(from: results)
                     }
                     catch
                     {
@@ -40,21 +57,42 @@ class NewsTableViewController: UITableViewController {
                     }
 
                 }
-                
-
-
             }
             task.resume()
         }
-
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
+    func fetchPostData(from postList: [Int])
+    {
+        let session = URLSession(configuration: .default)
+        for postID in postList
+        {
+            if let url = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(postID).json")
+            {
+                let task = session.dataTask(with: url) { data, response, error in
+                    if error != nil
+                    {
+                        print(error!)
+                    }
+                    
+                    if let safeData = data
+                    {
+                        do
+                        {
+                            let post = try JSONDecoder().decode(PostData.self, from: safeData)
+                            self.posts.append(post)
+                        }
+                        catch
+                        {
+                            print(error)
+                        }
+                    }
+                }
+                task.resume()
+            }
+        }
+    }
+    
     // MARK: - Table view data source
 
 

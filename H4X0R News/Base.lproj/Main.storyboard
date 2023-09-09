@@ -50,7 +50,13 @@
                             <outlet property="delegate" destination="Is9-nY-GmJ" id="r7G-P6-JZk"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="R3O-hK-Heq"/>
+                    <navigationItem key="navigationItem" id="R3O-hK-Heq">
+                        <barButtonItem key="leftBarButtonItem" title="Retrieve" id="Gi9-L7-QXx">
+                            <connections>
+                                <action selector="retrieveButtonPressed:" destination="Is9-nY-GmJ" id="hLS-kd-caU"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="arA-Zv-c4t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
