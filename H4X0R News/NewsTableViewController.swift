@@ -11,10 +11,14 @@ class NewsTableViewController: UITableViewController {
     
     var array: [String] = []
     var posts: [PostData] = []
-
-
+    let queue = OperationQueue()
+    var session : URLSession?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        session = URLSession(configuration: .default, delegate: self, delegateQueue: queue)
+//        print(session)
         
         self.title = "H4X0R News"
 
@@ -36,9 +40,8 @@ class NewsTableViewController: UITableViewController {
     {
         if let url = URL(string: K.websiteURL)
         {
-            let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url) { data, response, error in
-                
+
+            let task = session!.dataTask(with: url) { data, response, error in
                 if error != nil
                 {
                     print(error!)
@@ -64,12 +67,14 @@ class NewsTableViewController: UITableViewController {
     
     func fetchPostData(from postList: [Int])
     {
-        let session = URLSession(configuration: .default)
-        for postID in postList
+        // store first 100 values only from array
+        let shortenedPostList = Array(postList[0..<15])
+        
+        for postID in shortenedPostList
         {
             if let url = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(postID).json")
             {
-                let task = session.dataTask(with: url) { data, response, error in
+                let task = session!.dataTask(with: url) { data, response, error in
                     if error != nil
                     {
                         print(error!)
@@ -91,7 +96,18 @@ class NewsTableViewController: UITableViewController {
                 task.resume()
             }
         }
+        sleep(4)
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+
+        }
     }
+    
+    func parsePostDataArray(from postDataArray: [PostData])
+    {
+        
+    }
+    
     
     // MARK: - Table view data source
 
@@ -103,7 +119,7 @@ class NewsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return array.count
+        return posts.count
     }
 
     
@@ -111,8 +127,8 @@ class NewsTableViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! NewsTableViewCell
         
-        cell.postLabel?.text = array[indexPath.row]
-        cell.upvotesLabel.text = "1"
+        cell.postLabel?.text = posts[indexPath.row].title
+        cell.upvotesLabel.text = "\(posts[indexPath.row].score)"
         
 //        var content = cell.defaultContentConfiguration()
 //
@@ -124,51 +140,9 @@ class NewsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }
+}
 
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+extension NewsTableViewController: URLSessionTaskDelegate
+{
+    
 }
