@@ -10,14 +10,12 @@ import UIKit
 class NewsTableViewController: UITableViewController {
     
     var posts: [PostData] = []
-    let queue = OperationQueue()
-    var session : URLSession?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "H4X0R News"
 
-        fetchPostsList()
+        fetchPostIDs()
     }
     
     @IBAction func retrieveButtonPressed(_ sender: UIBarButtonItem) {
@@ -25,7 +23,7 @@ class NewsTableViewController: UITableViewController {
     }
     
 
-    func fetchPostsList()
+    func fetchPostIDs()
     {
         let session = URLSession(configuration: .default)
         if let url = URL(string: K.websiteURL)
@@ -40,9 +38,8 @@ class NewsTableViewController: UITableViewController {
                 {
                     do
                     {
-                        let decoder = JSONDecoder()
-                        let results = try decoder.decode([Int].self, from: safeData)
-                        self.fetchPostData(from: results)
+                        let results = try JSONDecoder().decode([Int].self, from: safeData)
+                        self.parsePostData(from: results)
                     }
                     catch
                     {
@@ -55,14 +52,12 @@ class NewsTableViewController: UITableViewController {
         }
     }
     
-    func fetchPostData(from postList: [Int])
+    func parsePostData(from postIDsArray: [Int])
     {
-        // store first 100 values only from array
-        let shortenedPostList = Array(postList[0..<15])
-        print(shortenedPostList.count)
+        // store first 30 post IDs only
+        let shortenedPostIDsArray = Array(postIDsArray[0..<30])
         let session = URLSession(configuration: .default)
-        var counter = 0
-        for postID in shortenedPostList
+        for postID in shortenedPostIDsArray
         {
             if let url = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(postID).json")
             {
@@ -76,15 +71,11 @@ class NewsTableViewController: UITableViewController {
                     {
                         do
                         {
-//                            print(String(data: safeData, encoding: .utf8)!)
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
                             self.posts.append(post)
                             DispatchQueue.main.async {
                                 self.tableView.reloadData()
-
                             }
-                            counter += 1
-                            print(counter)
                         }
                         catch
                         {
@@ -95,17 +86,9 @@ class NewsTableViewController: UITableViewController {
                 task.resume()
             }
         }
-//        sleep(1)
     }
-    
-    func parsePostDataArray(from postDataArray: [PostData])
-    {
-        
-    }
-    
     
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
@@ -113,7 +96,6 @@ class NewsTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -130,11 +112,6 @@ class NewsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        print("selected")
     }
-}
-
-extension NewsTableViewController: URLSessionTaskDelegate
-{
-    
 }
