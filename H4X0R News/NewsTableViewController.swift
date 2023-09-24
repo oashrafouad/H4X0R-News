@@ -9,26 +9,15 @@ import UIKit
 
 class NewsTableViewController: UITableViewController {
     
-    var array: [String] = []
     var posts: [PostData] = []
     let queue = OperationQueue()
     var session : URLSession?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        session = URLSession(configuration: .default, delegate: self, delegateQueue: queue)
-//        print(session)
-        
         self.title = "H4X0R News"
 
         fetchPostsList()
-        
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
     
     @IBAction func retrieveButtonPressed(_ sender: UIBarButtonItem) {
@@ -38,10 +27,10 @@ class NewsTableViewController: UITableViewController {
 
     func fetchPostsList()
     {
+        let session = URLSession(configuration: .default)
         if let url = URL(string: K.websiteURL)
         {
-
-            let task = session!.dataTask(with: url) { data, response, error in
+            let task = session.dataTask(with: url) { data, response, error in
                 if error != nil
                 {
                     print(error!)
@@ -51,7 +40,8 @@ class NewsTableViewController: UITableViewController {
                 {
                     do
                     {
-                        let results = try JSONDecoder().decode([Int].self, from: safeData)
+                        let decoder = JSONDecoder()
+                        let results = try decoder.decode([Int].self, from: safeData)
                         self.fetchPostData(from: results)
                     }
                     catch
@@ -69,12 +59,14 @@ class NewsTableViewController: UITableViewController {
     {
         // store first 100 values only from array
         let shortenedPostList = Array(postList[0..<15])
-        
+        print(shortenedPostList.count)
+        let session = URLSession(configuration: .default)
+        var counter = 0
         for postID in shortenedPostList
         {
             if let url = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(postID).json")
             {
-                let task = session!.dataTask(with: url) { data, response, error in
+                let task = session.dataTask(with: url) { data, response, error in
                     if error != nil
                     {
                         print(error!)
@@ -84,8 +76,15 @@ class NewsTableViewController: UITableViewController {
                     {
                         do
                         {
+//                            print(String(data: safeData, encoding: .utf8)!)
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
                             self.posts.append(post)
+                            DispatchQueue.main.async {
+                                self.tableView.reloadData()
+
+                            }
+                            counter += 1
+                            print(counter)
                         }
                         catch
                         {
@@ -96,11 +95,7 @@ class NewsTableViewController: UITableViewController {
                 task.resume()
             }
         }
-        sleep(4)
-        DispatchQueue.main.async {
-            self.tableView.reloadData()
-
-        }
+//        sleep(1)
     }
     
     func parsePostDataArray(from postDataArray: [PostData])
@@ -111,14 +106,11 @@ class NewsTableViewController: UITableViewController {
     
     // MARK: - Table view data source
 
-
     override func numberOfSections(in tableView: UITableView) -> Int {
-//         #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return posts.count
     }
 
@@ -132,7 +124,7 @@ class NewsTableViewController: UITableViewController {
         
 //        var content = cell.defaultContentConfiguration()
 //
-//        content.text = array[indexPath.row]
+//        content.text = posts[indexPath.row].title
 //        cell.contentConfiguration = content
         return cell
     }
