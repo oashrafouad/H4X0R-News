@@ -7,8 +7,8 @@
 
 import UIKit
 
-class NewsTableViewCell: UITableViewCell {
-
+class PostsTableViewCell: UITableViewCell {
+    
     @IBOutlet weak var upvotesLabel: UILabel!
     @IBOutlet weak var postLabel: UILabel!
     

@@ -7,9 +7,10 @@
 
 import UIKit
 
-class NewsTableViewController: UITableViewController {
+class PostsTableViewController: UITableViewController {
     
     var posts: [PostData] = []
+    var index = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,6 +72,8 @@ class NewsTableViewController: UITableViewController {
                     {
                         do
                         {
+//                            print(String(data: safeData, encoding: .utf8)!)
+//                            print("\n")
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
                             self.posts.append(post)
                             DispatchQueue.main.async {
@@ -99,7 +102,7 @@ class NewsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! NewsTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! PostsTableViewCell
         
         cell.postLabel?.text = posts[indexPath.row].title
         cell.upvotesLabel.text = "\(posts[indexPath.row].score)"
@@ -112,6 +115,20 @@ class NewsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("selected")
+//        print(posts[indexPath.row].url)
+        index = indexPath.row
+        self.performSegue(withIdentifier: K.postSegue, sender: posts[indexPath.row].url)
+        
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if (segue.identifier == K.postSegue)
+        {
+            let destinationVC = segue.destination as! PostViewController
+            let url = sender as! URL
+            destinationVC.url = url
+        }
+    }
+    
+
 }

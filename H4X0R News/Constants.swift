@@ -8,4 +8,5 @@
 struct K
 {
     static let websiteURL = "https://hacker-news.firebaseio.com/v0/topstories.json"
+    static let postSegue = "postSegue"
 }
