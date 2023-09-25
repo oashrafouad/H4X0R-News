@@ -10,13 +10,23 @@ import WebKit
 
 class PostViewController: UIViewController {
     
-    @IBOutlet weak var webView: WKWebView!
+    let webView = WKWebView()
     
     var url : URL?
 
+    
+    override func loadView() {
+        self.view = webView
+        webView.navigationDelegate = self
+
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         webView.allowsBackForwardNavigationGestures = true
         
         if url != nil
@@ -32,5 +42,17 @@ class PostViewController: UIViewController {
             alert.addAction(action)
             present(alert, animated: true)
         }
+    }
+}
+
+extension PostViewController: WKNavigationDelegate
+{
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
+        let url = navigationAction.request.url!
+        
+        UIApplication.shared.open(url)
+        decisionHandler(.cancel)
+        return
     }
 }

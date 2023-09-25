@@ -6,11 +6,11 @@
 //
 
 import UIKit
+import SafariServices
 
 class PostsTableViewController: UITableViewController {
     
     var posts: [PostData] = []
-    var index = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,8 +67,6 @@ class PostsTableViewController: UITableViewController {
                     {
                         do
                         {
-//                            print(String(data: safeData, encoding: .utf8)!)
-//                            print("\n")
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
                             self.posts.append(post)
                             DispatchQueue.main.async {
@@ -101,29 +99,14 @@ class PostsTableViewController: UITableViewController {
         
         cell.postLabel?.text = posts[indexPath.row].title
         cell.upvotesLabel.text = "\(posts[indexPath.row].score)"
-        
-//        var content = cell.defaultContentConfiguration()
-//
-//        content.text = posts[indexPath.row].title
-//        cell.contentConfiguration = content
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        print(posts[indexPath.row].url)
-        index = indexPath.row
-        self.performSegue(withIdentifier: K.postSegue, sender: posts[indexPath.row].url)
+//        self.performSegue(withIdentifier: K.postSegue, sender: posts[indexPath.row].url)
+        let safariView = SFSafariViewController(url: posts[indexPath.row].url)
+        
+        self.present(safariView, animated: true)
         
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if (segue.identifier == K.postSegue)
-        {
-            let destinationVC = segue.destination as! PostViewController
-            let url = sender as! URL
-            destinationVC.url = url
-        }
-    }
-    
-
 }
