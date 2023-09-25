@@ -18,11 +18,6 @@ class PostsTableViewController: UITableViewController {
 
         fetchPostIDs()
     }
-    
-    @IBAction func retrieveButtonPressed(_ sender: UIBarButtonItem) {
-        print(posts)
-    }
-    
 
     func fetchPostIDs()
     {
