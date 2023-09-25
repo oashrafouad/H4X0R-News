@@ -17,8 +17,19 @@ class PostViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        let webConfiguartion = WKWebViewConfiguration()
-        webView.load(URLRequest(url: url!))
+        if url != nil
+        {
+            webView.load(URLRequest(url: url!))
+        }
+        else
+        {
+            let alert = UIAlertController(title: "Error", message: "Error viewing webpage", preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default) { action in
+                self.navigationController?.popViewController(animated: true)
+            }
+            alert.addAction(action)
+            present(alert, animated: true)
+        }
     }
     
 
