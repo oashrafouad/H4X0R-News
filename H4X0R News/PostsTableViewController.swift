@@ -54,7 +54,7 @@ class PostsTableViewController: UITableViewController {
         let shortenedPostIDsArray = Array(postIDsArray[0..<100])
         let session = URLSession(configuration: .default)
 
-        for postID in postIDsArray
+        for postID in shortenedPostIDsArray
         {
             if let url = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(postID).json")
             {
@@ -66,6 +66,7 @@ class PostsTableViewController: UITableViewController {
                     
                     if let safeData = data
                     {
+                        print(String(data: safeData, encoding: .utf8)!)
                         do
                         {
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
