@@ -50,10 +50,11 @@ class PostsTableViewController: UITableViewController {
     
     func parsePostData(from postIDsArray: [Int])
     {
-        // store first 30 post IDs only
-        let shortenedPostIDsArray = Array(postIDsArray[0..<30])
+        // store first 100 post IDs only
+        let shortenedPostIDsArray = Array(postIDsArray[0..<100])
         let session = URLSession(configuration: .default)
-        for postID in shortenedPostIDsArray
+
+        for postID in postIDsArray
         {
             if let url = URL(string: "https://hacker-news.firebaseio.com/v0/item/\(postID).json")
             {
@@ -69,9 +70,15 @@ class PostsTableViewController: UITableViewController {
                         {
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
                             self.posts.append(post)
-                            DispatchQueue.main.async {
-                                self.tableView.reloadData()
+                            
+                            // Reload table view only when the for loop finishes and posts are loaded
+                            if self.posts.count == shortenedPostIDsArray.count
+                            {
+                                DispatchQueue.main.async {
+                                    self.tableView.reloadData()
+                                }
                             }
+
                         }
                         catch
                         {
@@ -103,10 +110,17 @@ class PostsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        self.performSegue(withIdentifier: K.postSegue, sender: posts[indexPath.row].url)
-        let safariView = SFSafariViewController(url: posts[indexPath.row].url)
-        
-        self.present(safariView, animated: true)
-        
+        if let url = posts[indexPath.row].url
+        {
+            let safariView = SFSafariViewController(url: url)
+            self.present(safariView, animated: true)
+        }
+        else
+        {
+            let alert = UIAlertController(title: "Can't open URL", message: "This post doesn't contain a URL link", preferredStyle: .alert)
+            let action = UIAlertAction(title: "OK", style: .default)
+            alert.addAction(action)
+            self.present(alert, animated: true)
+        }
     }
 }
