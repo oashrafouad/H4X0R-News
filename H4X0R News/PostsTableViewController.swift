@@ -18,7 +18,7 @@ class PostsTableViewController: UITableViewController {
         super.viewDidLoad()
         self.title = "H4X0R News"
         
-//        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.hidesWhenStopped = true
         loadingIndicator.startAnimating()
 
         fetchPostIDs()
@@ -81,7 +81,6 @@ class PostsTableViewController: UITableViewController {
                             {
                                 DispatchQueue.main.sync {
                                     self.loadingIndicator.stopAnimating()
-                                    self.loadingIndicator.isHidden = true
                                 }
                                 
                                 DispatchQueue.main.async {
