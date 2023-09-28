@@ -10,11 +10,16 @@ import SafariServices
 
 class PostsTableViewController: UITableViewController {
     
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
+    
     var posts: [PostData] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "H4X0R News"
+        
+//        loadingIndicator.hidesWhenStopped = true
+        loadingIndicator.startAnimating()
 
         fetchPostIDs()
     }
@@ -66,7 +71,6 @@ class PostsTableViewController: UITableViewController {
                     
                     if let safeData = data
                     {
-                        print(String(data: safeData, encoding: .utf8)!)
                         do
                         {
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
@@ -75,11 +79,19 @@ class PostsTableViewController: UITableViewController {
                             // Reload table view only when the for loop finishes and posts are loaded
                             if self.posts.count == shortenedPostIDsArray.count
                             {
+                                DispatchQueue.main.sync {
+                                    self.loadingIndicator.stopAnimating()
+                                    self.loadingIndicator.isHidden = true
+                                }
+                                
                                 DispatchQueue.main.async {
-                                    self.tableView.reloadData()
+                                    UIView.transition(with: self.tableView, duration: 0.4, options: .transitionCrossDissolve)
+                                    {
+                                        self.tableView.reloadData()
+                                    }
                                 }
                             }
-
+                            
                         }
                         catch
                         {
