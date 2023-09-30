@@ -42,14 +42,8 @@ open class LoadingIndicatorView: UIView {
     open func showHUD() {
         if activityCounter == 0 {
             DispatchQueue.main.async {
-                // detect dark mode
-                if #available(iOS 12.0, *) {
-                    if self.traitCollection.userInterfaceStyle == .light {
-                        self.viewIndicatorBG.backgroundColor = .lightGray
-                    }
-                    else if self.traitCollection.userInterfaceStyle == .dark {
-                        self.viewIndicatorBG.backgroundColor = .darkGray
-                    }
+                if #available(iOS 13.0, *) {
+                    self.viewIndicatorBG.backgroundColor = .systemGray2
                 }
                 self.viewIndicatorBG.alpha = 0.7
                 self.viewIndicatorBG.tag = self.indicatorViewTag
