@@ -7,20 +7,19 @@
 
 import UIKit
 import SafariServices
+import LoadingIndicatorView
 
 class PostsTableViewController: UITableViewController {
     
-    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
-    
+    var loadingIndicator = LoadingIndicatorView()
     var posts: [PostData] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = "H4X0R News"
-        
-        loadingIndicator.hidesWhenStopped = true
-        loadingIndicator.startAnimating()
 
+        self.loadingIndicator.showHUD()
+  
         fetchPostIDs()
     }
 
@@ -80,7 +79,7 @@ class PostsTableViewController: UITableViewController {
                             if self.posts.count == shortenedPostIDsArray.count
                             {
                                 DispatchQueue.main.sync {
-                                    self.loadingIndicator.stopAnimating()
+                                    self.loadingIndicator.hideHUD()
                                 }
                                 
                                 DispatchQueue.main.async {

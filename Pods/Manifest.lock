@@ -1,0 +1,16 @@
+PODS:
+  - LoadingIndicatorView (1.2)
+
+DEPENDENCIES:
+  - LoadingIndicatorView
+
+SPEC REPOS:
+  trunk:
+    - LoadingIndicatorView
+
+SPEC CHECKSUMS:
+  LoadingIndicatorView: f913380318d8d1cf817183486244c760aa4a32a1
+
+PODFILE CHECKSUM: 329453f7dcdcbd7ed4eef901cb0600a736199c9c
+
+COCOAPODS: 1.12.1

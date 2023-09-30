@@ -16,10 +16,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" id="rWP-7q-DbC">
-                            <rect key="frame" x="0.0" y="121.66666793823242" width="375" height="68"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="0.0" reuseIdentifier="NewsCell" id="hgA-Sr-loN" customClass="PostsTableViewCell" customModule="H4X0R_News" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="50" width="375" height="43.666667938232422"/>
@@ -56,9 +52,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="R3O-hK-Heq"/>
-                    <connections>
-                        <outlet property="loadingIndicator" destination="rWP-7q-DbC" id="dJM-lU-tnh"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="arA-Zv-c4t" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
