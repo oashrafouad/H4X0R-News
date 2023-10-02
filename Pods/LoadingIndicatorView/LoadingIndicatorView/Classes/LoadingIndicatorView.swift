@@ -42,9 +42,7 @@ open class LoadingIndicatorView: UIView {
     open func showHUD() {
         if activityCounter == 0 {
             DispatchQueue.main.async {
-                if #available(iOS 13.0, *) {
-                    self.viewIndicatorBG.backgroundColor = .systemGray2
-                }
+                self.viewIndicatorBG.backgroundColor = .black
                 self.viewIndicatorBG.alpha = 0.7
                 self.viewIndicatorBG.tag = self.indicatorViewTag
                 self.viewIndicatorBG.layer.cornerRadius = self.viewIndicatorBG.frame.size.width / 8
