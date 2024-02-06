@@ -13,17 +13,22 @@ class PostsTableViewController: UITableViewController {
     
     var loadingIndicator = LoadingIndicatorView()
     var posts: [PostData] = []
-    
+    var cachedPosts: [PostData] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.title = "H4X0R News"
+        
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(fetchPostIDs), for: .valueChanged)
 
         self.loadingIndicator.showHUD()
   
         fetchPostIDs()
     }
-
-    func fetchPostIDs()
+    
+    @objc func fetchPostIDs()
     {
         let session = URLSession(configuration: .default)
         if let url = URL(string: K.websiteURL)
@@ -54,6 +59,9 @@ class PostsTableViewController: UITableViewController {
     
     func parsePostData(from postIDsArray: [Int])
     {
+        // Empty array first instead of appending to it
+        cachedPosts = []
+        
         // store first 100 post IDs only
         let shortenedPostIDsArray = Array(postIDsArray[0..<100])
         let session = URLSession(configuration: .default)
@@ -73,13 +81,16 @@ class PostsTableViewController: UITableViewController {
                         do
                         {
                             let post = try JSONDecoder().decode(PostData.self, from: safeData)
-                            self.posts.append(post)
+                            self.cachedPosts.append(post)
                             
                             // Reload table view only when the for loop finishes and posts are loaded
-                            if self.posts.count == shortenedPostIDsArray.count
+                            if self.cachedPosts.count == shortenedPostIDsArray.count
                             {
                                 DispatchQueue.main.sync {
                                     self.loadingIndicator.hideHUD()
+                                    self.updateViewConstraints()
+                                    self.refreshControl?.endRefreshing()
+                                    self.posts = self.cachedPosts
                                 }
                                 
                                 DispatchQueue.main.async {
@@ -112,9 +123,12 @@ class PostsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
+        print("reloadData called")
+//        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! PostsTableViewCell
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! PostsTableViewCell
         
+        cell.postLabel?.text = posts[indexPath.row].title
+        cell.postLabel?.text = posts[indexPath.row].title
         cell.postLabel?.text = posts[indexPath.row].title
         cell.upvotesLabel.text = "\(posts[indexPath.row].score)"
         return cell
