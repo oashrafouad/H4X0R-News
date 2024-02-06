@@ -88,7 +88,6 @@ class PostsTableViewController: UITableViewController {
                             {
                                 DispatchQueue.main.sync {
                                     self.loadingIndicator.hideHUD()
-                                    self.updateViewConstraints()
                                     self.refreshControl?.endRefreshing()
                                     self.posts = self.cachedPosts
                                 }
@@ -123,8 +122,6 @@ class PostsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print("reloadData called")
-//        let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! PostsTableViewCell
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! PostsTableViewCell
         
         cell.postLabel?.text = posts[indexPath.row].title
