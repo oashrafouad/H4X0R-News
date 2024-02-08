@@ -99,7 +99,6 @@ class PostsTableViewController: UITableViewController {
                                     }
                                 }
                             }
-                            
                         }
                         catch
                         {
@@ -123,11 +122,12 @@ class PostsTableViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "NewsCell", for: indexPath) as! PostsTableViewCell
-        
-        cell.postLabel?.text = posts[indexPath.row].title
-        cell.postLabel?.text = posts[indexPath.row].title
+
         cell.postLabel?.text = posts[indexPath.row].title
         cell.upvotesLabel.text = "\(posts[indexPath.row].score)"
+        cell.commentsButtonTapped = { [weak self] in
+            self?.performSegue(withIdentifier: "commentsSegue", sender: self?.posts[indexPath.row].kids)
+        }
         return cell
     }
     
@@ -143,6 +143,13 @@ class PostsTableViewController: UITableViewController {
             let action = UIAlertAction(title: "OK", style: .default)
             alert.addAction(action)
             self.present(alert, animated: true)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "commentsSegue", let kids = sender as? [Int] {
+            let destinationVC = segue.destination as! CommentsTableViewController
+            destinationVC.postKids = kids
         }
     }
 }
